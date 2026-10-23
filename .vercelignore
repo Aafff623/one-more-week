@@ -1,0 +1,16 @@
+node_modules
+dist
+test-results
+playwright-report
+_legacy-workbuddy
+_rework-backup-20261023
+vibe_images
+One-More-Week-Handoff
+specs
+scripts
+.env
+.env.*
+.qoder-credits
+.wbapp_*
+.vercel
+_refactor-backup-20261023

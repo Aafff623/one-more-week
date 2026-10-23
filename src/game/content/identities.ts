@@ -1,0 +1,48 @@
+import type { Identity } from '../models'
+
+export const identities: Identity[] = [
+  {
+    id: 'student',
+    name: '大学生',
+    english: 'The Student',
+    imageKey: '/images/identity-student.webp',
+    tags: ['学业', '关系', '探索'],
+    description: '课表、社团、兼职和一段说不清的关系。钱不多，时间更不多。',
+    quote: '我想知道，认真生活到底是什么感觉。',
+    intro: '你有一周的时间，可以在课程、关系、休息和自我探索之间做选择。',
+    stats: { energy: 68, mood: 64, growth: 46, relationships: 54, money: 3200 },
+  },
+  {
+    id: 'newcomer',
+    name: '职场新人',
+    english: 'The Newcomer',
+    imageKey: '/images/identity-newcomer.webp',
+    tags: ['工作', '独立', '边界'],
+    description: '刚进入职场，既想做好工作，也想给生活留一点空间。',
+    quote: '我不想只顾着赶路，也想看看沿途。',
+    intro: '你有一周的时间，可以在工作、关系、休息和自我证明之间做选择。',
+    stats: { energy: 60, mood: 56, growth: 55, relationships: 46, money: 6200 },
+  },
+  {
+    id: 'freelancer',
+    name: '自由职业者',
+    english: 'The Freelancer',
+    imageKey: '/images/identity-freelancer.webp',
+    tags: ['创作', '收入', '自由'],
+    description: '时间由自己安排，但每个决定也都需要自己承担。',
+    quote: '自由不是没有安排，而是自己决定安排什么。',
+    intro: '你有一周的时间，可以在创作、收入、关系和自己定的节奏之间做选择。',
+    stats: { energy: 62, mood: 70, growth: 62, relationships: 42, money: 4800 },
+  },
+  {
+    id: 'researcher',
+    name: '考研备战者',
+    english: 'The Candidate',
+    imageKey: '/images/identity-researcher.webp',
+    tags: ['专注', '压力', '坚持'],
+    description: '为了更远的未来努力，也不想把今天全部交给焦虑。',
+    quote: '目标很重要，但我也想好好过完今天。',
+    intro: '你有一周的时间，可以在专注、压力、关系和恢复之间做选择。',
+    stats: { energy: 55, mood: 48, growth: 64, relationships: 40, money: 2100 },
+  },
+]
