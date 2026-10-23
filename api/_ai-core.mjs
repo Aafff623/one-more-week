@@ -1,11 +1,16 @@
 import { localPetComment } from '../shared/pet-fallback.mjs'
 import { requestPetReply } from '../shared/pet-provider.mjs'
+import { requestAudio } from '../shared/tts-provider.mjs'
+import { createXfyunTtsProvider, xfyunVoiceFor } from '../shared/xfyun-tts.mjs'
 
 const MINIMAX_BASE = () => (process.env.MINIMAX_BASE_URL || 'https://api.minimax.cn/v1').replace(/\/$/, '')
 const STEPFUN_BASE = () => (process.env.STEPFUN_BASE_URL || 'https://api.stepfun.com/step_plan/v1').replace(/\/$/, '')
 const MINIMAX_MODEL = () => process.env.MINIMAX_MODEL || 'MiniMax-M3.1-Flash'
 const STEPFUN_MODEL = () => process.env.STEPFUN_MODEL || 'step-5-preview'
 const MINIMAX_TTS_MODEL = () => process.env.MINIMAX_TTS_MODEL || 'speech-2.8-hd'
+const XFYUN_MAAS_BASE = () =>
+  (process.env.XFYUN_MAAS_BASE_URL || 'https://maas-api.cn-huabei-1.xf-yun.com/v2').replace(/\/$/, '')
+const XFYUN_MAAS_MODEL = () => process.env.XFYUN_MAAS_MODEL || 'spark-x2.6'
 
 const VOICE_IDS = new Set([
   'male-qn-daxuesheng',
@@ -168,6 +173,22 @@ export async function handlePet(req, res) {
     })
   }
 
+  const sparkKey = process.env.XFYUN_MAAS_API_KEY
+  if (sparkKey) {
+    providers.push({
+      name: '讯飞星火',
+      comment: () =>
+        callChat({
+          base: XFYUN_MAAS_BASE(),
+          key: sparkKey,
+          model: XFYUN_MAAS_MODEL(),
+          messages,
+          maxTokens: 600,
+          temperature: 0.8,
+        }),
+    })
+  }
+
   sendJson(res, 200, await requestPetReply(payload, providers))
 }
 
@@ -198,42 +219,67 @@ export async function handleTts(req, res) {
     sendJson(res, 400, { error: '未知音色' })
     return
   }
-  const key = process.env.MINIMAX_API_KEY
-  if (!key) {
+  const rawSpeed = Number(body.speed)
+  const speed = Number.isFinite(rawSpeed) ? Math.min(1.2, Math.max(0.8, rawSpeed)) : 1
+  const minimaxKey = process.env.MINIMAX_API_KEY
+  const xfyunVoice = xfyunVoiceFor(voiceId)
+
+  const providers = []
+  if (minimaxKey) {
+    providers.push({
+      name: 'MiniMax',
+      synthesize: async () => {
+        const data = await postJson(`${MINIMAX_BASE()}/t2a_v2`, minimaxKey, {
+          model: MINIMAX_TTS_MODEL(),
+          text,
+          voice_setting: { voice_id: voiceId, speed, vol: 1, pitch: 0 },
+          audio_setting: {
+            format: 'mp3',
+            sample_rate: 32000,
+            bitrate: 128000,
+            channel: 1,
+          },
+          output_format: 'hex',
+          stream: false,
+        })
+        if (data?.base_resp?.status_code && data.base_resp.status_code !== 0) {
+          throw new Error(data.base_resp.status_msg || 'TTS provider error')
+        }
+        const hex = data?.data?.audio
+        if (typeof hex !== 'string' || hex.length < 8) {
+          throw new Error('TTS returned no audio')
+        }
+        return { audio: Buffer.from(hex, 'hex'), contentType: 'audio/mpeg' }
+      },
+    })
+  }
+
+  if (xfyunVoice && process.env.XFYUN_APPID && process.env.XFYUN_API_KEY && process.env.XFYUN_API_SECRET) {
+    providers.push(
+      createXfyunTtsProvider({
+        appId: process.env.XFYUN_APPID,
+        apiKey: process.env.XFYUN_API_KEY,
+        apiSecret: process.env.XFYUN_API_SECRET,
+        voice: xfyunVoice,
+        speed: Math.round(50 * speed),
+      }),
+    )
+  }
+
+  if (!providers.length) {
     sendJson(res, 503, { error: '语音服务未配置' })
     return
   }
-  const rawSpeed = Number(body.speed)
-  const speed = Number.isFinite(rawSpeed) ? Math.min(1.2, Math.max(0.8, rawSpeed)) : 1
-  try {
-    const data = await postJson(`${MINIMAX_BASE()}/t2a_v2`, key, {
-      model: MINIMAX_TTS_MODEL(),
-      text,
-      voice_setting: { voice_id: voiceId, speed, vol: 1, pitch: 0 },
-      audio_setting: {
-        format: 'mp3',
-        sample_rate: 32000,
-        bitrate: 128000,
-        channel: 1,
-      },
-      output_format: 'hex',
-      stream: false,
-    })
-    if (data?.base_resp?.status_code && data.base_resp.status_code !== 0) {
-      throw new Error(data.base_resp.status_msg || 'TTS provider error')
-    }
-    const hex = data?.data?.audio
-    if (typeof hex !== 'string' || hex.length < 8) {
-      throw new Error('TTS returned no audio')
-    }
-    const audio = Buffer.from(hex, 'hex')
-    res.statusCode = 200
-    res.setHeader('Content-Type', 'audio/mpeg')
-    res.setHeader('Cache-Control', 'private, max-age=3600')
-    res.setHeader('Content-Length', String(audio.length))
-    res.end(audio)
-  } catch (error) {
-    console.error('[tts] MiniMax failed:', String(error).slice(0, 200))
+
+  const result = await requestAudio(text, providers)
+  if (!result) {
     sendJson(res, 502, { error: '语音暂时不可用' })
+    return
   }
+  res.statusCode = 200
+  res.setHeader('Content-Type', result.contentType)
+  res.setHeader('X-TTS-Provider', result.provider)
+  res.setHeader('Cache-Control', 'private, max-age=3600')
+  res.setHeader('Content-Length', String(result.audio.length))
+  res.end(result.audio)
 }

@@ -11,6 +11,12 @@ const SERVER_ENV_KEYS = [
   'STEPFUN_API_KEY',
   'STEPFUN_BASE_URL',
   'STEPFUN_MODEL',
+  'XFYUN_APPID',
+  'XFYUN_API_KEY',
+  'XFYUN_API_SECRET',
+  'XFYUN_MAAS_API_KEY',
+  'XFYUN_MAAS_BASE_URL',
+  'XFYUN_MAAS_MODEL',
 ]
 
 const coreUrl = new URL('./api/_ai-core.mjs', import.meta.url).href
