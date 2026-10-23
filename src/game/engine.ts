@@ -409,11 +409,7 @@ export function evaluateEnding(state: GameState, endings: GameContent['endings']
     if (ending.fallback) continue
     if (requirementsMet(ending.conditions, state)) {
       const matched = ending.conditions.map(describeRequirement)
-      const explanation =
-        matched.length > 0
-          ? `这一周的${matched.join('、')}，把故事推向了这里。`
-          : ending.description
-      return { ending, matched, explanation }
+      return { ending, matched, explanation: ending.why }
     }
   }
 
@@ -439,7 +435,7 @@ export function evaluateEnding(state: GameState, endings: GameContent['endings']
     matched: [],
     explanation: closest
       ? `这一周没有触发一个明确的结局。你走到的位置，离「${closest.ending.title}」最近。`
-      : fallback.description,
+      : fallback.why,
     closest: closest ? { ending: closest.ending, unmet: closest.unmet } : undefined,
   }
 }

@@ -3127,3 +3127,41 @@ html.reduce-motion .pet-button {
     width: min(250px, calc(100vw - 24px));
   }
 }
+
+@media (max-width: 700px) {
+  .game-screen .game-headline {
+    display: none;
+  }
+
+  .game-screen .run-hud {
+    margin-bottom: 8px;
+  }
+
+  .game-screen .scene-frame {
+    min-height: 200px;
+  }
+
+  .game-screen .scene-copy {
+    left: 14px;
+    right: 14px;
+    bottom: 12px;
+  }
+
+  .game-screen .scene-copy h2 {
+    font-size: 1.1rem;
+    line-height: 1.2;
+  }
+
+  .game-screen .scene-copy p {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    font-size: 0.72rem;
+    line-height: 1.55;
+  }
+
+  .game-screen .scene-time {
+    font-size: 0.62rem;
+  }
+}

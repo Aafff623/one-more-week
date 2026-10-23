@@ -16,6 +16,7 @@ export interface Requirement {
   max?: number
   equals?: boolean | number | string
   label?: string
+  tolerance?: number
 }
 
 export interface DelayedEffectInput {
@@ -156,6 +157,7 @@ export interface EndingDefinition {
   english: string
   icon: string
   description: string
+  why: string
   reflection: string
   accent: 'lime' | 'cyan' | 'coral' | 'purple'
   conditions: Requirement[]

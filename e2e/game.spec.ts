@@ -126,6 +126,13 @@ test('mobile: plays the first day without overflow or tiny controls', async ({ p
     .locator('.choice-panel')
     .evaluate((node) => node.getBoundingClientRect().top)
   expect(promptTop).toBeLessThan(await page.evaluate(() => innerHeight))
+  const fullyVisibleCards = await page.locator('.choice-card').evaluateAll((nodes) =>
+    nodes.filter((node) => {
+      const rect = node.getBoundingClientRect()
+      return rect.top >= 0 && rect.bottom <= innerHeight
+    }).length,
+  )
+  expect(fullyVisibleCards).toBeGreaterThanOrEqual(2)
 
   const firstChoice = page.locator('.choice-panel .choice-card:not([disabled])').first()
   await firstChoice.scrollIntoViewIfNeeded()

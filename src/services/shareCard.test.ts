@@ -54,4 +54,22 @@ describe('share card ending metrics', () => {
       ['心情', '47'],
     ])
   })
+
+  it('shows the stats that define balanced and explorer weeks', () => {
+    expect(endingMetrics('balanced', stats)).toEqual([
+      ['精力', '2'],
+      ['心情', '47'],
+    ])
+    expect(endingMetrics('explorer', stats)).toEqual([
+      ['成长', '100'],
+      ['精力', '2'],
+    ])
+  })
+
+  it('shows the highest and lowest stats for a fallback week', () => {
+    expect(endingMetrics('week-keeper', stats)).toEqual([
+      ['成长', '100'],
+      ['精力', '2'],
+    ])
+  })
 })

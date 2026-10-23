@@ -3,6 +3,7 @@ import { computed, onMounted } from 'vue'
 import StatStrip from '../components/StatStrip.vue'
 import { ALLOWED_DELAYED_CHOICE_IDS, effectLabel } from '../game/rules'
 import { endingImageKey } from '../game/choiceImages'
+import { selectMoments } from '../game/moments'
 import { imageFor } from '../lib/images'
 import { prefetchModule } from '../lib/prefetch'
 import { useGameStore } from '../stores/game'
@@ -18,20 +19,9 @@ const matched = computed(() => game.ending?.matched ?? [])
 const identity = computed(() => game.identity)
 const time = computed(() => game.timeView)
 const closest = computed(() => game.ending?.closest ?? null)
-const moments = computed(() => {
-  if (!state.value) return []
-  const history = state.value.history
-  const echoed = history
-    .filter((record) => ALLOWED_DELAYED_CHOICE_IDS.has(record.choiceId))
-    .slice(0, 2)
-  if (history.length <= 4) return [...history].reverse()
-  const indexes = [0, Math.round((history.length - 1) / 3), Math.round(((history.length - 1) * 2) / 3), history.length - 1]
-  const sampled = indexes.map((index) => history[index])
-  const unique = new Map(
-    [...echoed, ...sampled].map((record) => [`${record.eventId}-${record.choiceId}`, record]),
-  )
-  return [...unique.values()].slice(0, 4)
-})
+const moments = computed(() =>
+  state.value ? selectMoments(state.value.history, ALLOWED_DELAYED_CHOICE_IDS) : [],
+)
 
 async function restart() {
   const ok = await ui.ask({

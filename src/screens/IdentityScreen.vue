@@ -61,7 +61,10 @@ async function start() {
       <div>
         <span class="eyebrow">FOUR STARTING POINTS</span>
         <h1>选择一个身份，<span class="highlight">开启你的一周。</span></h1>
-        <p>身份决定初始状态和独白，不决定结局。你仍然可以做出完全不同的选择。</p>
+        <p>
+          首版完整主写大学生线；其他身份共享同一套七天事件，起始状态、独白和声音不同。
+          身份不决定结局，你仍然可以做出完全不同的选择。
+        </p>
       </div>
       <span class="meta-pill"><i class="dot"></i> 首版：大学生主线</span>
     </div>

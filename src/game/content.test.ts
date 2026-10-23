@@ -27,6 +27,16 @@ describe('content integrity', () => {
     expect(gameContent.identities).toHaveLength(4)
     expect(gameContent.endings.length).toBeGreaterThanOrEqual(3)
     expect(gameContent.endings.some((ending) => ending.fallback)).toBe(true)
+    for (const ending of gameContent.endings) {
+      expect(ending.why.length, ending.id).toBeGreaterThan(30)
+    }
+  })
+
+  it('keeps every identity on the same cash scale', () => {
+    for (const identity of gameContent.identities) {
+      expect(identity.stats.money, identity.id).toBeGreaterThanOrEqual(850)
+      expect(identity.stats.money, identity.id).toBeLessThanOrEqual(1100)
+    }
   })
 
   it('has exactly four active events for every day in the default state', () => {

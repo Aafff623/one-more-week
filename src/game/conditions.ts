@@ -5,9 +5,10 @@ export function requirementMet(requirement: Requirement, state: GameState): bool
   if (requirement.type === 'stat') {
     const key = requirement.key as StatKey
     const value = state.stats[key]
+    const tolerance = Math.max(0, requirement.tolerance ?? 0)
     if (value === undefined) return false
-    if (requirement.min !== undefined && value < requirement.min) return false
-    if (requirement.max !== undefined && value > requirement.max) return false
+    if (requirement.min !== undefined && value < requirement.min - tolerance) return false
+    if (requirement.max !== undefined && value > requirement.max + tolerance) return false
     return true
   }
 
@@ -30,11 +31,12 @@ export function describeGap(requirement: Requirement, state: GameState): string 
     const value = state.stats[key]
     const meta = STAT_META[key]
     const label = meta?.label ?? requirement.key
-    if (requirement.min !== undefined && value < requirement.min) {
-      return `${label} ${value}，需要至少 ${requirement.min}`
+    const tolerance = Math.max(0, requirement.tolerance ?? 0)
+    if (requirement.min !== undefined && value < requirement.min - tolerance) {
+      return `${label} ${value}，需要至少 ${requirement.min - tolerance}`
     }
-    if (requirement.max !== undefined && value > requirement.max) {
-      return `${label} ${value}，需要不超过 ${requirement.max}`
+    if (requirement.max !== undefined && value > requirement.max + tolerance) {
+      return `${label} ${value}，需要不超过 ${requirement.max + tolerance}`
     }
   }
   return describeRequirement(requirement)
@@ -51,10 +53,11 @@ export function describeRequirement(requirement: Requirement): string {
 
   const meta = STAT_META[requirement.key as StatKey]
   const label = meta?.label ?? requirement.key
+  const tolerance = Math.max(0, requirement.tolerance ?? 0)
   if (requirement.min !== undefined && requirement.max !== undefined) {
-    return `${label}在 ${requirement.min}–${requirement.max} 之间`
+    return `${label}在 ${requirement.min - tolerance}–${requirement.max + tolerance} 之间`
   }
-  if (requirement.min !== undefined) return `${label}至少 ${requirement.min}`
-  if (requirement.max !== undefined) return `${label}不超过 ${requirement.max}`
+  if (requirement.min !== undefined) return `${label}至少 ${requirement.min - tolerance}`
+  if (requirement.max !== undefined) return `${label}不超过 ${requirement.max + tolerance}`
   return `${label}满足条件`
 }

@@ -21,13 +21,23 @@ const FONT_SANS = '"Noto Sans SC", "Microsoft YaHei", "PingFang SC", Arial, sans
 
 const HIGHLIGHT_STATS: Record<string, Array<[string, keyof Stats]>> = {
   'burned-out': [['精力', 'energy'], ['成长', 'growth']],
-  balanced: [['精力', 'energy'], ['人际', 'relationships']],
+  balanced: [['精力', 'energy'], ['心情', 'mood']],
   connector: [['人际', 'relationships'], ['心情', 'mood']],
-  explorer: [['成长', 'growth'], ['心情', 'mood']],
-  'week-keeper': [['心情', 'mood'], ['成长', 'growth']],
+  explorer: [['成长', 'growth'], ['精力', 'energy']],
 }
 
+const ALL_STATS: Array<[string, keyof Stats]> = [
+  ['精力', 'energy'],
+  ['心情', 'mood'],
+  ['成长', 'growth'],
+  ['人际', 'relationships'],
+]
+
 export function endingMetrics(endingId: string, stats: Stats): Array<[string, string]> {
+  if (endingId === 'week-keeper') {
+    const sorted = [...ALL_STATS].sort((a, b) => stats[a[1]] - stats[b[1]])
+    return [sorted[sorted.length - 1], sorted[0]].map(([label, key]) => [label, String(stats[key])])
+  }
   const pair = HIGHLIGHT_STATS[endingId] ?? [['成长', 'growth'], ['人际', 'relationships']]
   return pair.map(([label, key]) => [label, String(stats[key])])
 }

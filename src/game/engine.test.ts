@@ -301,12 +301,12 @@ describe('ending evaluation', () => {
 
   it('shows the nearest ending and the exact gap for a fallback', () => {
     const balancedGap = evaluateEnding(
-      stateWithStats({ energy: 49, mood: 70, growth: 62, relationships: 64 }),
+      stateWithStats({ energy: 44, mood: 70, growth: 62, relationships: 64 }),
       gameContent.endings,
     )
     expect(balancedGap.ending.id).toBe('week-keeper')
     expect(balancedGap.closest?.ending.id).toBe('balanced')
-    expect(balancedGap.closest?.unmet).toContain('精力 49，需要至少 50')
+    expect(balancedGap.closest?.unmet).toContain('精力 44，需要至少 45')
     expect(balancedGap.explanation).toContain('平衡生活者')
 
     const restGap = evaluateEnding(
@@ -321,6 +321,22 @@ describe('ending evaluation', () => {
       gameContent.endings,
     )
     expect(balanced.ending.id).toBe('balanced')
+
+    const relationshipHeavy = evaluateEnding(
+      stateWithStats({ energy: 75, mood: 95, growth: 57, relationships: 88 }),
+      gameContent.endings,
+    )
+    expect(relationshipHeavy.ending.id).toBe('connector')
+  })
+
+  it('applies the balanced ending tolerance at both edges', () => {
+    const atEdge = (patch: Partial<Stats>) =>
+      evaluateEnding(stateWithStats(patch), gameContent.endings).ending.id
+
+    expect(atEdge({ energy: 45, mood: 55, growth: 50, relationships: 50 })).toBe('balanced')
+    expect(atEdge({ energy: 95, mood: 95, growth: 70, relationships: 70 })).toBe('balanced')
+    expect(atEdge({ energy: 44, mood: 50, growth: 50, relationships: 50 })).toBe('week-keeper')
+    expect(atEdge({ energy: 96, mood: 50, growth: 50, relationships: 50 })).toBe('week-keeper')
   })
 
   it('uses the selected identity and current event', () => {
