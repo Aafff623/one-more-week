@@ -20,3 +20,6 @@ vibe_images/
 specs/
 .qoder-credits/
 .wbapp_*
+
+scripts/export-content.mjs
+scripts/generate-*.py
