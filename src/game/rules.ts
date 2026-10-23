@@ -46,7 +46,7 @@ export const TONE_META: Record<ChoiceTone, { label: string; color: string }> = {
   focus: { label: '专注', color: 'var(--green)' },
   rest: { label: '休整', color: 'var(--cyan)' },
   connect: { label: '连接', color: 'var(--purple)' },
-  risk: { label: '冒险', color: 'var(--lime)' },
+  risk: { label: '回避', color: 'var(--lime)' },
 }
 
 export const TONE_KEYS: ChoiceTone[] = ['care', 'focus', 'rest', 'connect', 'risk']

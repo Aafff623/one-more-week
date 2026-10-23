@@ -24,6 +24,22 @@ export function requirementsMet(
   return requirements.every((requirement) => requirementMet(requirement, state))
 }
 
+export function describeGap(requirement: Requirement, state: GameState): string {
+  if (requirement.type === 'stat') {
+    const key = requirement.key as StatKey
+    const value = state.stats[key]
+    const meta = STAT_META[key]
+    const label = meta?.label ?? requirement.key
+    if (requirement.min !== undefined && value < requirement.min) {
+      return `${label} ${value}，需要至少 ${requirement.min}`
+    }
+    if (requirement.max !== undefined && value > requirement.max) {
+      return `${label} ${value}，需要不超过 ${requirement.max}`
+    }
+  }
+  return describeRequirement(requirement)
+}
+
 export function describeRequirement(requirement: Requirement): string {
   if (requirement.label) return requirement.label
 

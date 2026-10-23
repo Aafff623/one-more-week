@@ -309,6 +309,9 @@ watch(
                   <span v-if="state.toneStreak >= 3 && state.lastTone" class="tone-streak">
                     连续 {{ state.toneStreak }} 次{{ toneLabel(state.lastTone) }}，效果会放大
                   </span>
+                  <p v-if="toneLine.length" class="tone-help">
+                    连续 3 次同倾向会放大效果；结局由最终状态决定。
+                  </p>
                 </div>
                 <span class="eyebrow">WHAT WILL YOU DO?</span>
                 <h2>{{ event.prompt }}</h2>
@@ -438,6 +441,13 @@ watch(
             第 {{ summary.day + 1 }} 天开始前，你会带着今天的状态继续。未用完的自由时间已经自动变成休息。
           </p>
           <p v-else>七天已经被完整地过完。接下来，看看这一周留下了什么。</p>
+
+          <div class="result-actions day-summary-top">
+            <button class="btn btn-primary btn-lg" type="button" @click="game.continueAfterDay()">
+              {{ state.completed ? '查看这一周的结局' : `进入第 ${summary.day + 1} 天` }}
+              <span class="arrow">→</span>
+            </button>
+          </div>
 
           <div v-if="summary.slots.length" class="day-slot-list">
             <div v-for="slot in summary.slots" :key="slot.period" class="day-slot-row">

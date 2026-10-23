@@ -217,7 +217,7 @@ export const events: StoryEvent[] = [
         title: '给家里打个电话',
         detail: '不聊成绩，也不聊进度，只问问今天吃了什么。',
         hours: 1,
-        effects: fx(['relationships', 9], ['mood', 6], ['energy', 1], ['growth', -1]),
+        effects: fx(['relationships', 9], ['mood', 6], ['energy', -2], ['growth', -1]),
         outcome:
           '电话里没有发生什么大事，只是有人问你今天吃了什么。挂断后，房间安静得没那么硬。',
         tone: 'care',
@@ -314,9 +314,9 @@ export const events: StoryEvent[] = [
         title: '先自己压下来，希望没人发现',
         detail: '也许补一补就过去了，不必让所有人知道。',
         hours: 1,
-        effects: fx(['energy', -2], ['mood', -6], ['growth', -4]),
+        effects: fx(['energy', 3], ['mood', -3], ['growth', -2], ['relationships', -2]),
         outcome:
-          '你把错误藏了起来，也把一根刺留在了心里。之后每次看到那个数字，你都会想起它。',
+          '你暂时没有说出口，省下了解释和补救的力气，也把一根刺留在了心里。之后每次看到那个数字，你都会想起它。',
         tone: 'risk',
         hint: '隐藏成本',
         delayed: [later(2, '隐藏的成本一直在你心里', fx(['mood', -4]))],
@@ -411,9 +411,10 @@ export const events: StoryEvent[] = [
         title: '接一个临时兼职',
         detail: '用一个晚上换一笔钱，先把眼前的账单解决。',
         hours: 3,
-        effects: fx(['money', 120], ['energy', -8], ['growth', 3], ['mood', -3]),
+        effects: fx(['money', -180], ['energy', -8], ['growth', 3], ['mood', -3]),
+        requires: [{ type: 'stat', key: 'energy', min: 20, label: '精力至少 20' }],
         outcome:
-          '你用一个晚上换来一笔钱，也换来第二天更沉的肩膀。账单暂时过去了。',
+          '你用一个晚上换来一笔钱，扣掉账单后只剩下一点点。肩膀比钱包更沉，但眼前这一关过去了。',
         tone: 'focus',
         hint: '用时间换钱',
         delayed: [later(2, '那晚的透支在周末找上了你', fx(['energy', -4]))],
@@ -423,9 +424,9 @@ export const events: StoryEvent[] = [
         title: '拒绝兼职，重新看一下这个月的预算',
         detail: '也许问题不是赚得不够，而是有些支出可以重新安排。',
         hours: 1,
-        effects: fx(['money', 20], ['growth', 5], ['mood', -1], ['energy', -1]),
+        effects: fx(['money', -280], ['growth', 5], ['mood', -1], ['energy', -1]),
         outcome:
-          '你取消了一个不常用的订阅，也把剩下的支出重新排了序。没有多赚，但心里有数了。',
+          '你取消了几个不常用的订阅，把剩下的支出重新排了序。账单还是付了，但下个月会轻一点。',
         tone: 'care',
         hint: '面对数字',
         delayed: [later(2, '清楚的预算让后面几天少了意外', fx(['mood', 2]))],
@@ -435,7 +436,7 @@ export const events: StoryEvent[] = [
         title: '向家里开口',
         detail: '这笔钱确实超出预算，先接受一次支持。',
         hours: 1,
-        effects: fx(['money', 100], ['relationships', 4], ['mood', -3], ['energy', 1]),
+        effects: fx(['money', -200], ['relationships', 4], ['mood', -3], ['energy', 1]),
         outcome:
           '家人很快转了钱，也没有多问。你却花了一点时间，消化那种说不清的不好意思。',
         tone: 'care',
@@ -466,6 +467,7 @@ export const events: StoryEvent[] = [
         detail: '把电脑合上，暂时从待办清单里离开。',
         hours: 3,
         effects: fx(['mood', 9], ['relationships', 8], ['energy', 1], ['money', -58], ['growth', -2]),
+        requires: [{ type: 'stat', key: 'money', min: 100, label: '现金至少 ¥100' }],
         outcome:
           '夜风有点凉，朋友讲的笑话也不算特别好笑了。但你们聊到很晚，项目还在那里，生活也没有因此停下。',
         tone: 'connect',
@@ -481,6 +483,7 @@ export const events: StoryEvent[] = [
         detail: '再努力一会儿，争取按时交付；明天给自己留个喘息的机会。',
         hours: 3,
         effects: fx(['growth', 13], ['energy', -10], ['mood', -3], ['relationships', -2]),
+        requires: [{ type: 'stat', key: 'energy', min: 15, label: '精力至少 15' }],
         outcome:
           '你把最重要的部分跑通了。完成的一刻很踏实，但你也知道自己需要停一下。',
         tone: 'focus',
@@ -557,9 +560,9 @@ export const events: StoryEvent[] = [
         title: '先放着，等有空再回',
         detail: '现在没有力气认真回应，晚一点再说。',
         hours: 1,
-        effects: fx(['growth', 4], ['relationships', -4], ['mood', -2]),
+        effects: fx(['growth', 4], ['relationships', -4], ['mood', -2], ['energy', 2]),
         outcome:
-          '你把它标记成未读。忙完之后，你已经不知道该从哪里接起。',
+          '你把它标记成未读，先把手头的事做完，也省下了一点应付社交的力气。忙完之后，你已经不知道该从哪里接起。',
         tone: 'risk',
         hint: '延后连接',
         delayed: [later(1, '那条消息一直没有被真正回应', fx(['relationships', -3]))],
@@ -618,6 +621,59 @@ export const events: StoryEvent[] = [
     ],
   },
   {
+    id: 'd6-crash',
+    day: 6,
+    order: 1,
+    period: 'morning',
+    weekday: '周六',
+    date: '10/31',
+    timeLabel: '09:10',
+    location: '住处 · 上午',
+    category: '身心状态',
+    title: '身体先按下了暂停键',
+    imageKey: '/images/scene-quiet-bedroom.webp',
+    narrative:
+      '闹钟响过几次，你都没有真正坐起来。这一周的透支在周六上午找上门：头很沉，四肢像灌了铅。手机里还有没回的消息和下午的计划。',
+    prompt: '身体已经先替你做了决定。这个上午怎么办？',
+    conditions: [{ type: 'stat', key: 'energy', max: 12, label: '你已经透支到起不来' }],
+    choices: [
+      {
+        id: 'd6-crash-rest',
+        title: '取消上午的安排，睡到能起来',
+        detail: '把计划往后放，先让身体把这一周的账还上。',
+        hours: 1,
+        effects: fx(['energy', 14], ['mood', 4], ['growth', -3]),
+        outcome:
+          '你关掉闹钟，重新躺回去。醒来时已经接近中午，上午的计划没有完成，但身体终于不再发抖。',
+        tone: 'rest',
+        hint: '接受暂停',
+      },
+      {
+        id: 'd6-crash-push',
+        title: '撑着起来，把上午的事做完',
+        detail: '已经走到这里了，再撑一会儿就好。',
+        hours: 3,
+        effects: fx(['growth', 5], ['energy', -8], ['mood', -4], ['relationships', -1]),
+        requires: [{ type: 'stat', key: 'energy', min: 8, label: '精力至少 8' }],
+        outcome:
+          '你把自己从床上拖起来，勉强完成了上午的事。进度保住了，身体的抗议也更清楚了。',
+        tone: 'focus',
+        hint: '硬撑',
+      },
+      {
+        id: 'd6-crash-help',
+        title: '给同伴发消息，请半天假',
+        detail: '第一次把“我现在的状态”说出口。',
+        hours: 1,
+        effects: fx(['energy', 6], ['mood', 2], ['relationships', 4], ['growth', -2], ['money', -20]),
+        outcome:
+          '你发出消息，删改了几次才按下去。对方回得很干脆：“你先休息，下午我来。”你第一次没有一个人硬扛。',
+        tone: 'care',
+        hint: '接受帮助',
+      },
+    ],
+  },
+  {
     id: 'd6-body',
     day: 6,
     order: 1,
@@ -640,7 +696,7 @@ export const events: StoryEvent[] = [
         hours: 2,
         effects: fx(['energy', 8], ['mood', 6], ['relationships', 4], ['growth', -1]),
         outcome:
-          '走路时你们聊了很多平时没空聊的话题。回家后，问题还是那些问题，但你重新住回了自己的身体里。',
+          '你沿着河走，遇到一位熟人，一起走了一段。聊的都是平时没空聊的小事。回家后，问题还是那些问题，但你重新住回了自己的身体里。',
         tone: 'rest',
         hint: '身心恢复',
         delayed: [later(1, '身体被活动过，周日更容易清醒', fx(['energy', 2]))],
@@ -706,6 +762,7 @@ export const events: StoryEvent[] = [
         detail: '把能做的事都写进表里，至少不会浪费。',
         hours: 1,
         effects: fx(['growth', 9], ['energy', -5], ['mood', -4]),
+        requires: [{ type: 'stat', key: 'energy', min: 10, label: '精力至少 10' }],
         outcome:
           '计划看起来很充实。你也知道，只要有一个环节延迟，整张表都会开始追赶你。',
         tone: 'risk',
@@ -758,7 +815,7 @@ export const events: StoryEvent[] = [
         title: '给重要的人发一条消息',
         detail: '告诉对方，这一周你想起了他。',
         hours: 1,
-        effects: fx(['relationships', 10], ['mood', 6], ['growth', -1]),
+        effects: fx(['relationships', 10], ['mood', 6], ['growth', -1], ['energy', -1]),
         outcome:
           '你告诉对方，这一周想起了他。关系不是任务，却值得被认真对待。',
         tone: 'connect',

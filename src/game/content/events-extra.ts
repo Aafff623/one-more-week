@@ -96,7 +96,7 @@ export const extraEvents: StoryEvent[] = [
         title: '再刷一会儿手机',
         detail: '今天已经很累了，先让脑子放空。',
         hours: 1,
-        effects: fx(['mood', 2], ['energy', -3], ['growth', -2]),
+        effects: fx(['mood', 6], ['energy', -2], ['growth', -2]),
         outcome:
           '你本来只想看五分钟，抬起头已经过了半小时。睡意被拖走了，明天的事也还留在原处。',
         tone: 'risk',

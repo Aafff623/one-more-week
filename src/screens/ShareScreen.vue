@@ -115,7 +115,7 @@ async function copy() {
           <h2>生成你的结局卡</h2>
           <p>
             卡片包含「{{ data.ending.title }}」、{{ data.choiceCount }} 个关键选择、
-            {{ data.choiceHours }} 小时选择用时，以及成长与人际状态。
+            {{ data.choiceHours }} 小时选择用时，以及最能代表这个结局的两项状态。
           </p>
           <div class="share-summary">
             <div><strong>{{ data.choiceCount }}</strong><span>选择</span></div>
@@ -132,7 +132,7 @@ async function copy() {
             返回结局报告
           </button>
           <p class="small-note">
-            分享文案包含 #WorkBuddy #1024程序员节 话题标签，方便公开发布时使用。
+            分享文案包含 #再来一周 #1024程序员节 话题标签，方便公开发布时使用。
           </p>
         </aside>
       </div>

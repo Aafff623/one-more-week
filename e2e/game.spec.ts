@@ -49,7 +49,7 @@ async function completeWeek(page: Page) {
   for (let step = 0; step < 120; step += 1) {
     if (await page.locator('.ending-shell').count()) return
     if (await page.locator('.day-summary-card').count()) {
-      await page.locator('.day-summary-card .btn-primary').click()
+      await page.locator('.day-summary-card .day-summary-top .btn-primary').click()
       await page.waitForTimeout(150)
       continue
     }

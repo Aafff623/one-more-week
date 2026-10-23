@@ -27,7 +27,7 @@ export const endings: EndingDefinition[] = [
     reflection:
       '平衡不是把每一格都填满，而是知道什么时候该往前，什么时候该停下来。',
     conditions: [
-      { type: 'stat', key: 'energy', min: 60, max: 90, label: '你给恢复留出了位置' },
+      { type: 'stat', key: 'energy', min: 50, max: 90, label: '你给恢复留出了位置' },
       { type: 'stat', key: 'mood', min: 60, max: 90, label: '心情保持在可呼吸的范围' },
       { type: 'stat', key: 'relationships', min: 55, max: 90, label: '关系没有被完全挤到角落' },
       { type: 'stat', key: 'growth', min: 55, max: 90, label: '你也推进了对自己重要的事' },

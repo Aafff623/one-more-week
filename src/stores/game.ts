@@ -117,9 +117,6 @@ export const useGameStore = defineStore('game', {
         this.applyRun(ensureSession().start(identityId))
         this.selectedIdentityId = identityId
         this.screen = 'game'
-        useUiStore().notify(
-          `第 1 天，开始了。今天还有 ${this.game?.freeHoursLeft ?? 0} 小时自由时间。`,
-        )
         this.scrollTop()
       } catch (error) {
         this.reportError(error, '开始游戏失败')

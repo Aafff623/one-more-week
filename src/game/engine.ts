@@ -1,4 +1,4 @@
-import { describeRequirement, requirementsMet } from './conditions'
+import { describeGap, describeRequirement, requirementsMet } from './conditions'
 import type {
   Choice,
   ChoiceAvailability,
@@ -419,7 +419,29 @@ export function evaluateEnding(state: GameState, endings: GameContent['endings']
 
   const fallback = endings.find((ending) => ending.fallback)
   if (!fallback) throw new GameRuleError('NO_FALLBACK_ENDING', '缺少兜底结局。')
-  return { ending: fallback, matched: [], explanation: fallback.description }
+  const closest = endings
+    .filter((ending) => !ending.fallback)
+    .map((ending) => {
+      const matched = ending.conditions.filter((condition) => requirementsMet([condition], state)).length
+      return {
+        ending,
+        matched,
+        ratio: ending.conditions.length > 0 ? matched / ending.conditions.length : 0,
+        unmet: ending.conditions
+          .filter((condition) => !requirementsMet([condition], state))
+          .map((condition) => describeGap(condition, state)),
+      }
+    })
+    .sort((a, b) => b.ratio - a.ratio || b.matched - a.matched)[0]
+
+  return {
+    ending: fallback,
+    matched: [],
+    explanation: closest
+      ? `这一周没有触发一个明确的结局。你走到的位置，离「${closest.ending.title}」最近。`
+      : fallback.description,
+    closest: closest ? { ending: closest.ending, unmet: closest.unmet } : undefined,
+  }
 }
 
 export function getTimeView(state: GameState) {

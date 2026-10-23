@@ -19,6 +19,19 @@ const CYAN = '#79D8F2'
 const CORAL = '#EE8E76'
 const FONT_SANS = '"Noto Sans SC", "Microsoft YaHei", "PingFang SC", Arial, sans-serif'
 
+const HIGHLIGHT_STATS: Record<string, Array<[string, keyof Stats]>> = {
+  'burned-out': [['精力', 'energy'], ['成长', 'growth']],
+  balanced: [['精力', 'energy'], ['人际', 'relationships']],
+  connector: [['人际', 'relationships'], ['心情', 'mood']],
+  explorer: [['成长', 'growth'], ['心情', 'mood']],
+  'week-keeper': [['心情', 'mood'], ['成长', 'growth']],
+}
+
+export function endingMetrics(endingId: string, stats: Stats): Array<[string, string]> {
+  const pair = HIGHLIGHT_STATS[endingId] ?? [['成长', 'growth'], ['人际', 'relationships']]
+  return pair.map(([label, key]) => [label, String(stats[key])])
+}
+
 function roundedRect(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -149,8 +162,7 @@ export function drawShareCard(canvas: HTMLCanvasElement, data: ShareCardData): v
   const metrics: Array<[string, string]> = [
     ['关键选择', `${data.choiceCount}`],
     ['选择用时', `${data.choiceHours}h`],
-    ['成长', `${data.stats.growth}`],
-    ['人际', `${data.stats.relationships}`],
+    ...endingMetrics(data.ending.id, data.stats),
   ]
   metrics.forEach(([label, value], index) => {
     const x = 92 + index * 190
@@ -187,6 +199,6 @@ export function shareText(data: ShareCardData): string {
     `做了 ${data.choiceCount} 个选择，把 ${data.choiceHours} 小时交给了选择，留了 ${data.restHours} 小时给休息。`,
     `七天时间，每一个选择，都会在你的人生留下印记。`,
     '',
-    '#WorkBuddy #1024程序员节',
+    '#再来一周 #1024程序员节',
   ].join('\n')
 }

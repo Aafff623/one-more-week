@@ -10,7 +10,7 @@ export const identities: Identity[] = [
     description: '课表、社团、兼职和一段说不清的关系。钱不多，时间更不多。',
     quote: '我想知道，认真生活到底是什么感觉。',
     intro: '你有一周的时间，可以在课程、关系、休息和自我探索之间做选择。',
-    stats: { energy: 68, mood: 64, growth: 46, relationships: 54, money: 3200 },
+    stats: { energy: 68, mood: 64, growth: 46, relationships: 54, money: 900 },
   },
   {
     id: 'newcomer',

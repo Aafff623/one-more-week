@@ -162,10 +162,16 @@ export interface EndingDefinition {
   fallback?: boolean
 }
 
+export interface EndingGap {
+  ending: EndingDefinition
+  unmet: string[]
+}
+
 export interface EndingResult {
   ending: EndingDefinition
   matched: string[]
   explanation: string
+  closest?: EndingGap
 }
 
 export interface GameContent {

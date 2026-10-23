@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { wrapTextLines } from './shareCard'
+import { endingMetrics, wrapTextLines } from './shareCard'
 
 const measure = (value: string) => Array.from(value).length * 10
 const closing = Array.from('，。、；：？！）》」』】…,.;:!?)]}·')
@@ -35,5 +35,23 @@ describe('share card line wrapping', () => {
     const lines = wrapTextLines('012345678901234567890123456789', measure, 100, 2)
     expect(lines).toHaveLength(2)
     expect(lines[1].endsWith('…')).toBe(true)
+  })
+})
+
+describe('share card ending metrics', () => {
+  const stats = { energy: 2, mood: 47, growth: 100, relationships: 31, money: 900 }
+
+  it('shows energy and growth for a burned-out week', () => {
+    expect(endingMetrics('burned-out', stats)).toEqual([
+      ['精力', '2'],
+      ['成长', '100'],
+    ])
+  })
+
+  it('shows relationships and mood for a connector week', () => {
+    expect(endingMetrics('connector', stats)).toEqual([
+      ['人际', '31'],
+      ['心情', '47'],
+    ])
   })
 })

@@ -6,6 +6,7 @@ import {
   createGame,
   evaluateEnding,
   finishDay,
+  getChoiceAvailability,
   getDayEvents,
 } from './engine'
 import type { GameState } from './models'
@@ -40,6 +41,18 @@ describe('content integrity', () => {
         'evening',
       ])
     }
+  })
+
+  it('switches day six morning to the crash event when energy is very low', () => {
+    const state = stateForDay(6)
+    state.stats.energy = 8
+    const events = getDayEvents(state, gameContent)
+
+    expect(events).toHaveLength(4)
+    expect(events.find((event) => event.period === 'morning')?.id).toBe('d6-crash')
+    expect(getDayEvents(stateForDay(6), gameContent).find((event) => event.period === 'morning')?.id).toBe(
+      'd6-body',
+    )
   })
 
   it('switches the day five message event when the friend flag is set', () => {
@@ -98,8 +111,11 @@ describe('content integrity', () => {
     for (let day = 1; day <= 7; day += 1) {
       const events = getDayEvents(state, gameContent)
       for (const event of events) {
-        const choice = event.choices[0]
-        state = applyChoice(state, gameContent, event.id, choice.id, timestamp).state
+        const choice = event.choices.find(
+          (item) => getChoiceAvailability(state, event, item).ok,
+        )
+        expect(choice, `${event.id} needs an available choice`).toBeTruthy()
+        state = applyChoice(state, gameContent, event.id, choice!.id, timestamp).state
         if (event !== events[events.length - 1]) {
           state = advanceToNextEvent(state, gameContent, timestamp)
         }

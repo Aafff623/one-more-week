@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
 import StatStrip from '../components/StatStrip.vue'
-import { effectLabel } from '../game/rules'
+import { ALLOWED_DELAYED_CHOICE_IDS, effectLabel } from '../game/rules'
 import { endingImageKey } from '../game/choiceImages'
 import { imageFor } from '../lib/images'
 import { prefetchModule } from '../lib/prefetch'
@@ -17,12 +17,20 @@ const explanation = computed(() => game.ending?.explanation ?? '')
 const matched = computed(() => game.ending?.matched ?? [])
 const identity = computed(() => game.identity)
 const time = computed(() => game.timeView)
+const closest = computed(() => game.ending?.closest ?? null)
 const moments = computed(() => {
   if (!state.value) return []
   const history = state.value.history
+  const echoed = history
+    .filter((record) => ALLOWED_DELAYED_CHOICE_IDS.has(record.choiceId))
+    .slice(0, 2)
   if (history.length <= 4) return [...history].reverse()
   const indexes = [0, Math.round((history.length - 1) / 3), Math.round(((history.length - 1) * 2) / 3), history.length - 1]
-  return [...new Set(indexes)].map((index) => history[index])
+  const sampled = indexes.map((index) => history[index])
+  const unique = new Map(
+    [...echoed, ...sampled].map((record) => [`${record.eventId}-${record.choiceId}`, record]),
+  )
+  return [...unique.values()].slice(0, 4)
 })
 
 async function restart() {
@@ -56,7 +64,7 @@ onMounted(() => {
   <section v-if="state && ending && identity && time" class="ending-screen screen">
     <div class="ending-topline">
       <span class="eyebrow">ENDING REPORT / 结局报告</span>
-      <span class="meta-pill"><i class="dot"></i> 已完成 · 第 001 次</span>
+      <span class="meta-pill"><i class="dot"></i> 已完成 · 七日记录</span>
     </div>
 
     <div class="ending-shell">
@@ -74,15 +82,16 @@ onMounted(() => {
         />
         <div class="ending-copy">
           <span class="comic-label">YOUR WEEK / YOUR STORY</span>
-          <h1>这就是你的这一周。<span>也是另一种可能。</span></h1>
+          <h1>{{ ending.title }}<span>{{ ending.english }}</span></h1>
+          <p class="ending-tagline">这就是你的这一周。也是另一种可能。</p>
           <p>{{ ending.description }}</p>
           <p class="ending-identity">{{ identity.name }} · 七天 · 168 小时</p>
         </div>
         <div class="ending-badge">
           <span class="ending-icon">{{ ending.icon }}</span>
           <span class="eyebrow">YOUR ENDING / 你的结局</span>
-          <strong>{{ ending.title }}</strong>
-          <small>{{ ending.english }}</small>
+          <strong>{{ time.totalUsed }}h</strong>
+          <small>{{ state.history.length }} 个选择 · 七日记录</small>
         </div>
       </div>
 
@@ -94,6 +103,13 @@ onMounted(() => {
           <p>{{ explanation }}</p>
           <div v-if="matched.length" class="tag-row">
             <span v-for="reason in matched" :key="reason" class="tag">{{ reason }}</span>
+          </div>
+          <div v-if="closest" class="ending-gap">
+            <span class="eyebrow">NEAREST ENDING / 最接近的另一种可能</span>
+            <p>
+              <strong>{{ closest.ending.title }}</strong>
+              · {{ closest.unmet.join('；') }}
+            </p>
           </div>
         </div>
 

@@ -299,6 +299,30 @@ describe('ending evaluation', () => {
     expect(result.ending.fallback).toBe(true)
   })
 
+  it('shows the nearest ending and the exact gap for a fallback', () => {
+    const balancedGap = evaluateEnding(
+      stateWithStats({ energy: 49, mood: 70, growth: 62, relationships: 64 }),
+      gameContent.endings,
+    )
+    expect(balancedGap.ending.id).toBe('week-keeper')
+    expect(balancedGap.closest?.ending.id).toBe('balanced')
+    expect(balancedGap.closest?.unmet).toContain('精力 49，需要至少 50')
+    expect(balancedGap.explanation).toContain('平衡生活者')
+
+    const restGap = evaluateEnding(
+      stateWithStats({ energy: 100, mood: 97, growth: 21, relationships: 47 }),
+      gameContent.endings,
+    )
+    expect(restGap.closest?.ending.id).toBe('connector')
+    expect(restGap.closest?.unmet).toContain('人际 47，需要至少 75')
+
+    const balanced = evaluateEnding(
+      stateWithStats({ energy: 50, mood: 73, growth: 64, relationships: 62 }),
+      gameContent.endings,
+    )
+    expect(balanced.ending.id).toBe('balanced')
+  })
+
   it('uses the selected identity and current event', () => {
     const state = createGame(student, timestamp)
     expect(getCurrentEvent(state, gameContent)?.id).toBe('d1-morning')
